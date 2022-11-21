@@ -2,6 +2,7 @@ package com.IPL_Project;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main {
     public static final int MATCH_ID = 1;
@@ -105,10 +106,22 @@ public class Main {
 
             ArrayList<Match> matchTotalData = getMatchesData(con);
             ArrayList<Delivery> deliveriesTotalData = getDeliveryData(con);
-
+            findMatchesPlayedPerYear(matchTotalData);
 
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void findMatchesPlayedPerYear(ArrayList<Match> matchTotalData) {
+        HashMap<String, Integer> tossWinnersPerTeam = new HashMap<>();
+        for (Match match : matchTotalData) {
+            if (tossWinnersPerTeam.containsKey(match.getTossWinner())) {
+                tossWinnersPerTeam.put(match.getTossWinner(), tossWinnersPerTeam.get(match.getTossWinner()) + 1);
+            } else {
+                tossWinnersPerTeam.put(match.getTossWinner(), 1);
+            }
+        }
+        System.out.println(tossWinnersPerTeam);
     }
 }
