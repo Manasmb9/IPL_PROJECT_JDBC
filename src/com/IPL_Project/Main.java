@@ -37,14 +37,14 @@ public class Main {
     public static final int WIN_BY_RUNS = 12;
     public static final int WIN_BY_WICKETS = 13;
 
-    public static ArrayList<Match> getMatchesData(Connection con)throws SQLException {
+    public static ArrayList<Match> getMatchesData(Connection con) throws SQLException {
 
         ResultSet data;
         String query = "SELECT * FROM matches";
         Statement st = con.createStatement();
         data = st.executeQuery(query);
         ArrayList<Match> matchData = new ArrayList<>();
-        while (data.next()){
+        while (data.next()) {
             Match match = new Match();
             match.setId(data.getInt((ID)));
             match.setSeason(data.getInt(SEASON));
@@ -63,8 +63,9 @@ public class Main {
         }
         return matchData;
     }
+
     public static ArrayList<Delivery> getDeliveryData(Connection con) throws SQLException {
-        ResultSet data ;
+        ResultSet data;
         Statement st = con.createStatement();
         String query = "SELECT * FROM Delivery";
         data = st.executeQuery(query);
@@ -93,17 +94,15 @@ public class Main {
         }
         return deliveryData;
     }
+
     public static void main(String[] args) throws SQLException {
         Connection con;
-        String dbname = "test";
-        String user = "postgres";
-        String pass = "Test@123";
-
-
+        String databaseName = "test";
+        String username = "postgres";
+        String password = "Test@123";
         try {
             Class.forName("org.postgresql.Driver");
-            con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + dbname, user, pass);
-
+            con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + databaseName, username, password);
             ArrayList<Match> matchTotalData = getMatchesData(con);
             ArrayList<Delivery> deliveriesTotalData = getDeliveryData(con);
             findMatchesPlayedPerYear(matchTotalData);
@@ -111,8 +110,6 @@ public class Main {
             findExtraRunsConcededPerTeam2016(matchTotalData, deliveriesTotalData);
             findEconomicBowler2015(matchTotalData, deliveriesTotalData);
             findTossWinnersPerTeam(matchTotalData);
-
-
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -129,6 +126,7 @@ public class Main {
         }
         System.out.println(tossWinnersPerTeam);
     }
+
     private static void findEconomicBowler2015(ArrayList<Match> matchTotalData, ArrayList<Delivery> deliverTotalData) {
         HashMap<String, Integer> bowlsCount = new HashMap<>();
         HashMap<String, Integer> bowlerRuns = new HashMap<>();
@@ -167,6 +165,7 @@ public class Main {
         }
         System.out.println(economicBowler);
     }
+
     private static void findExtraRunsConcededPerTeam2016(ArrayList<Match> matchTotalData, ArrayList<Delivery> deliverTotalData) {
         HashMap<String, Integer> extraRunsConcededPerTeam = new HashMap<>();
         int firstMatchId = 0;
