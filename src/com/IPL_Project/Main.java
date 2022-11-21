@@ -37,11 +37,10 @@ public class Main {
     public static final int WIN_BY_RUNS = 12;
     public static final int WIN_BY_WICKETS = 13;
 
-    public static ArrayList<Match> getMatchesData(Connection con) throws SQLException {
-
+    public static ArrayList<Match> getMatchesData(Connection connectDataBase) throws SQLException {
         ResultSet data;
         String query = "SELECT * FROM matches";
-        Statement st = con.createStatement();
+        Statement st = connectDataBase.createStatement();
         data = st.executeQuery(query);
         ArrayList<Match> matchData = new ArrayList<>();
         while (data.next()) {
@@ -64,9 +63,9 @@ public class Main {
         return matchData;
     }
 
-    public static ArrayList<Delivery> getDeliveryData(Connection con) throws SQLException {
+    public static ArrayList<Delivery> getDeliveryData(Connection connectDataBase) throws SQLException {
         ResultSet data;
-        Statement st = con.createStatement();
+        Statement st = connectDataBase.createStatement();
         String query = "SELECT * FROM Delivery";
         data = st.executeQuery(query);
         ArrayList<Delivery> deliveryData = new ArrayList<>();
@@ -96,15 +95,15 @@ public class Main {
     }
 
     public static void main(String[] args) throws SQLException {
-        Connection con;
+        Connection connectDataBase;
         String databaseName = "test";
         String username = "postgres";
         String password = "Test@123";
         try {
             Class.forName("org.postgresql.Driver");
-            con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + databaseName, username, password);
-            ArrayList<Match> matchTotalData = getMatchesData(con);
-            ArrayList<Delivery> deliveriesTotalData = getDeliveryData(con);
+            connectDataBase = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + databaseName, username, password);
+            ArrayList<Match> matchTotalData = getMatchesData(connectDataBase);
+            ArrayList<Delivery> deliveriesTotalData = getDeliveryData(connectDataBase);
             findMatchesPlayedPerYear(matchTotalData);
             findMatchesWonPerTeam(matchTotalData);
             findExtraRunsConcededPerTeam2016(matchTotalData, deliveriesTotalData);
