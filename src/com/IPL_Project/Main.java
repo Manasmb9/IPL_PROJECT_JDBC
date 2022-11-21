@@ -107,13 +107,18 @@ public class Main {
             ArrayList<Match> matchTotalData = getMatchesData(con);
             ArrayList<Delivery> deliveriesTotalData = getDeliveryData(con);
             findMatchesPlayedPerYear(matchTotalData);
+            findMatchesWonPerTeam(matchTotalData);
+            findExtraRunsConcededPerTeam2016(matchTotalData, deliveriesTotalData);
+            findEconomicBowler2015(matchTotalData, deliveriesTotalData);
+            findTossWinnersPerTeam(matchTotalData);
+
 
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void findMatchesPlayedPerYear(ArrayList<Match> matchTotalData) {
+    private static void findTossWinnersPerTeam(ArrayList<Match> matchTotalData) {
         HashMap<String, Integer> tossWinnersPerTeam = new HashMap<>();
         for (Match match : matchTotalData) {
             if (tossWinnersPerTeam.containsKey(match.getTossWinner())) {
@@ -123,5 +128,93 @@ public class Main {
             }
         }
         System.out.println(tossWinnersPerTeam);
+    }
+    private static void findEconomicBowler2015(ArrayList<Match> matchTotalData, ArrayList<Delivery> deliverTotalData) {
+        HashMap<String, Integer> bowlsCount = new HashMap<>();
+        HashMap<String, Integer> bowlerRuns = new HashMap<>();
+        String economicBowler = "";
+        int firstMatchId = 0;
+        int lastMatchId = 0;
+        for (Match match : matchTotalData) {
+            if (match.getSeason() == 2015) {
+                if (firstMatchId == 0) {
+                    firstMatchId = match.getId();
+                }
+                lastMatchId = match.getId();
+            }
+        }
+        for (Delivery delivery : deliverTotalData) {
+            if (delivery.getMatchId() >= firstMatchId && delivery.getMatchId() <= lastMatchId) {
+                if (bowlsCount.containsKey(delivery.getBowler())) {
+                    bowlsCount.put(delivery.getBowler(), bowlsCount.get(delivery.getBowler()) + 1);
+                } else {
+                    bowlsCount.put(delivery.getBowler(), 1);
+                }
+                if (bowlerRuns.containsKey(delivery.getBowler())) {
+                    bowlerRuns.put(delivery.getBowler(), bowlerRuns.get(delivery.getBowler()) + delivery.getTotalRuns());
+                } else {
+                    bowlerRuns.put(delivery.getBowler(), delivery.getTotalRuns());
+                }
+            }
+        }
+        float economicBowlerValue, bestEconomicBowlerValue = Float.MAX_VALUE;
+        for (String bowler : bowlerRuns.keySet()) {
+            economicBowlerValue = (bowlerRuns.get(bowler) * 6F / bowlsCount.get(bowler));
+            if (economicBowlerValue < bestEconomicBowlerValue) {
+                bestEconomicBowlerValue = economicBowlerValue;
+                economicBowler = bowler;
+            }
+        }
+        System.out.println(economicBowler);
+    }
+    private static void findExtraRunsConcededPerTeam2016(ArrayList<Match> matchTotalData, ArrayList<Delivery> deliverTotalData) {
+        HashMap<String, Integer> extraRunsConcededPerTeam = new HashMap<>();
+        int firstMatchId = 0;
+        int lastMatchId = 0;
+        for (Match match : matchTotalData) {
+            if (match.getSeason() == 2016) {
+                if (firstMatchId == 0) {
+                    firstMatchId = match.getId();
+                }
+                lastMatchId = match.getId();
+            }
+        }
+        for (Delivery delivery : deliverTotalData) {
+            if (delivery.getMatchId() >= firstMatchId && delivery.getMatchId() <= lastMatchId) {
+                if (extraRunsConcededPerTeam.containsKey(delivery.getBattingTeam())) {
+                    extraRunsConcededPerTeam.put(delivery.getBattingTeam(), extraRunsConcededPerTeam.get(delivery.getBattingTeam()) + delivery.getExtraRuns());
+                } else {
+                    extraRunsConcededPerTeam.put(delivery.getBattingTeam(), delivery.getExtraRuns());
+                }
+            }
+        }
+        System.out.println(extraRunsConcededPerTeam);
+    }
+
+    private static void findMatchesWonPerTeam(ArrayList<Match> matchTotalData) {
+        HashMap<String, Integer> matchesWonPerTeam = new HashMap<>();
+        for (Match match : matchTotalData) {
+            if (!match.getResult().equals("no result")) {
+                if (matchesWonPerTeam.containsKey(match.getWinner())) {
+                    matchesWonPerTeam.put(match.getWinner(), matchesWonPerTeam.get(match.getWinner()) + 1);
+                } else {
+                    matchesWonPerTeam.put(match.getWinner(), 1);
+                }
+            }
+        }
+        System.out.println(matchesWonPerTeam);
+    }
+
+    private static void findMatchesPlayedPerYear(ArrayList<Match> matchTotalData) {
+        HashMap<Integer, Integer> matchesPlayedPerYear = new HashMap<>();
+        for (Match match : matchTotalData) {
+            if (matchesPlayedPerYear.containsKey(match.getSeason())) {
+                matchesPlayedPerYear.put(match.getSeason(), matchesPlayedPerYear.get(match.getSeason()) + 1);
+            } else {
+                matchesPlayedPerYear.put(match.getSeason(), 1);
+            }
+        }
+        System.out.println(matchesPlayedPerYear);
+
     }
 }
